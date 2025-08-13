@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router";
 import useSWR from "swr";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ProductCard from "../components/ProductCard";
 import {
   ArrowLeft,
   Heart,
@@ -135,6 +136,12 @@ export default function ProductOverview() {
           </div>
         </div>
       </div>
+
+      {/* Related products */}
+      <RelatedProducts
+        categoryId={product?.category?.id}
+        currentProductId={product.id}
+      />
     </div>
   );
 }
@@ -247,5 +254,54 @@ function InfoCard({ icon, title, subtitle }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function RelatedProducts({ categoryId, currentProductId }) {
+  const shouldFetch = Boolean(categoryId);
+
+  async function fetchProducts(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
+    const data = await response.json();
+    return data;
+  }
+
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useSWR(
+    shouldFetch
+      ? `https://api.escuelajs.co/api/v1/categories/${categoryId}/products`
+      : null,
+    fetchProducts
+  );
+
+  const related = Array.isArray(products)
+    ? products.filter((p) => p.id !== currentProductId).slice(0, 4)
+    : [];
+
+  if (!shouldFetch) return null;
+
+  return (
+    <section className="mt-14">
+      <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800">
+        You might also like
+      </h2>
+      {isLoading && <LoadingSpinner />}
+      {error && (
+        <p className="text-sm text-red-500">Unable to load related products.</p>
+      )}
+      {!isLoading && !error && related.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {related.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
