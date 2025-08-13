@@ -8,6 +8,7 @@ import Electronics from "./pages/categories/Electronics";
 import Furniture from "./pages/categories/Furniture";
 import Shoes from "./pages/categories/Shoes";
 import Miscellaneous from "./pages/categories/Miscellaneous";
+import ProductOverview from "./pages/ProductOverview";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route path="/furniture" element={<Furniture />} />
         <Route path="/shoes" element={<Shoes />} />
         <Route path="/miscellaneous" element={<Miscellaneous />} />
+        <Route path="/product/:product_id" element={<ProductOverview />} />
       </Routes>
     </BrowserRouter>
   );
