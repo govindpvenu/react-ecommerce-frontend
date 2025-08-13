@@ -1,8 +1,11 @@
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, isLoading }) {
+  if (isLoading || !product) {
+    return <ProductCardShimmer />;
+  }
   return (
-    <div className="max-w-xs hover:bg-gray-200 rounded-xl shadow-md hover:shadow-xl overflow-hidden border  transition duration-300">
+    <div className="max-w-xs hover:bg-green-50 rounded-xl shadow-md hover:shadow-xl overflow-hidden border  transition duration-300">
       <img
-        src={product.image}
+        src={product?.images?.[0] || "https://placehold.co/600x400"}
         alt={product.title}
         className="h-64 w-full object-contain p-4"
       />
@@ -11,17 +14,14 @@ export default function ProductCard({ product }) {
           {product.title}
         </h2>
         <p className="text-gray-500 text-sm mb-2 capitalize">
-          {product.category}
+          {product?.category?.name}
         </p>
         <p className="text-gray-700 text-sm line-clamp-3 mb-3">
           {product.description}
         </p>
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-blue-600">
-            ${product.price}
-          </span>
-          <span className="text-sm text-yellow-500">
-            ⭐ {product.rating?.rate} ({product.rating?.count})
+          <span className="text-lg font-bold text-green-500">
+            ${Number(product.price).toFixed(2)}
           </span>
         </div>
       </div>
